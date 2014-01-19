@@ -22,17 +22,43 @@ along with infinite-maze-of-pacman.  If not, see
 import pygame
 import sys
 from infinitepacman.game import Game
+try:
+	import android
+	import android.mixer as mixer
+except:
+	android = None
+	import pygame.mixer as mixer
 
-if __name__ == u'__main__':
-	center = '-c' in sys.argv
-	evolve = '-e' in sys.argv
-	blink = '-b' in sys.argv
+def main():
 
+	"""The main routine that is automatically called by pgs4a."""
+
+	print 'Entering main loop'
+	if android == None:
+		center = '-c' in sys.argv
+		evolve = '-e' in sys.argv
+		blink = '-b' in sys.argv
+	else:
+		center = True
+		evolve = True
+		blink = False
+	if android != None:
+		android.init()
+		android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
+	print 'Initializing'
 	pygame.init()
 	pygame.font.init()
-	pygame.mixer.init()
+	mixer.init()
+	print 'Entering game loop'
 	while True:
+		print 'Building game object'
 		g = Game(center=center, evolve=evolve, blink=blink)
+		print 'Launching game'
 		if not g.launch():
+			print 'Quitting'
 			break
 	pygame.quit()
+
+if __name__ == u'__main__':
+
+	main()

@@ -22,7 +22,12 @@ import os
 from infinitepacman.grid import Grid
 from random import shuffle, randint, sample, choice
 import pygame
-from matplotlib import pyplot as plt
+try:
+	import android
+	import android.mixer as mixer
+except:
+	android = None
+	import pygame.mixer as mixer
 
 class Maze(object):
 
@@ -59,7 +64,7 @@ class Maze(object):
 			self.pList = [pygame.transform.smoothscale(pygame.image.load( \
 				u'infinitepacman/sprites/pearl%d.png' % i), (self.w/3, self.w/3) ) \
 				for i in range(1,5)]
-			self.soundGameOver = pygame.mixer.Sound(os.path.join( \
+			self.soundGameOver = mixer.Sound(os.path.join( \
 				os.path.dirname(__file__), u'sounds', u'gameOver.ogg'))
 		# Build a list of all positions
 		self.allPos = []
@@ -245,8 +250,12 @@ Returns:
 
 		"""Initialize the PyGame window."""
 
+		print 'Initializing window'
 		self.win = pygame.display.set_mode((self.s*self.w, self.s*self.w))
-		self.fnt = pygame.font.SysFont('Bandal', 64, bold=True)
+		print 'Loading font'
+		self.fnt = pygame.font.Font(os.path.join(os.path.dirname(__file__), \
+			u'fonts', 'FreeMono.ttf'), 64)
+		print 'Done'
 
 	def setPacman(self, pacman):
 

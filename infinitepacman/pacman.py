@@ -21,6 +21,12 @@ along with infinite-maze-of-pacman.  If not, see
 import os
 import pygame
 from infinitepacman.creature import Creature
+try:
+	import android
+	import android.mixer as mixer
+except:
+	android = None
+	import pygame.mixer as mixer
 
 class Pacman(Creature):
 
@@ -39,11 +45,11 @@ class Pacman(Creature):
 		self.maze.setPacman(self)
 		self.score = 0
 		self.goalDir = u'stop'
-		self.hit1 = pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),
+		self.hit1 = mixer.Sound(os.path.join(os.path.dirname(__file__),
 			u'sounds', u'hit1.ogg'))
-		self.hit10 = pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),
+		self.hit10 = mixer.Sound(os.path.join(os.path.dirname(__file__),
 			u'sounds', u'hit10.ogg'))
-		self.hit50 = pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),
+		self.hit50 = mixer.Sound(os.path.join(os.path.dirname(__file__),
 			u'sounds', u'hit50.ogg'))
 
 	def getScore(self):

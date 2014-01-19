@@ -1,0 +1,10 @@
+{"layout": "internal",
+"orientation": "portrait",
+"package": "nl.cogsci.infinitemaze",
+"include_pil": true,
+"name": "Infinite Maze of Pac-man",
+"icon_name": "Infinite Maze of Pac-man",
+"version": "0.1.0",
+"permissions": ["INTERNET", "VIBRATE"],
+"include_sqlite": false,
+"numeric_version": "1"}

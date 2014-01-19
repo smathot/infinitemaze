@@ -23,13 +23,19 @@ from infinitepacman.pacman import Pacman
 from infinitepacman.ghost import Ghost
 import os
 import pygame
+try:
+	import android
+	import android.mixer as mixer
+except:
+	android = None
+	import pygame.mixer as mixer
 
 class Game(object):
 
 	"""The game-controller class."""
 
 	def __init__(self, fps=6, evolve=False, center=False, blink=False, sound= \
-		True, music=True):
+		True, music=False):
 
 		"""
 		Constructor.
@@ -59,14 +65,19 @@ class Game(object):
 		"""Starts the game."""
 
 		self.maze.initWin()
+		xc = (self.maze.width() * self.maze.cellSize()[0])/2
+		yc = (self.maze.height() * self.maze.cellSize()[1])/2
 		if self.music:
-			music = pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),
+			print 'Initializing music'
+			music = mixer.Sound(os.path.join(os.path.dirname(__file__),
 				u'sounds', u'goof.ogg'), loops=-1)
 			music.set_volume(.25)
 		if self.sound:
-			startSound = pygame.mixer.Sound(os.path.join(os.path.dirname( \
+			print 'Initializing startSound'
+			startSound = mixer.Sound(os.path.join(os.path.dirname( \
 				__file__), u'sounds', u'hit1.ogg'))
 		# Intro animation!
+		print 'Intro animation ...'
 		for dir in [u'up', u'right', u'down', u'left'] * 2:
 			self.maze.showClear()
 			for ghost in self.ghosts:
@@ -76,6 +87,8 @@ class Game(object):
 			if self.sound:
 				startSound.play()
 			pygame.display.flip()
+			if android != None and android.check_pause():
+				android.wait_for_resume()
 			pygame.time.wait(self.frameDur)
 
 		if self.music:
@@ -104,16 +117,12 @@ class Game(object):
 						ghost = Ghost(self.maze, self.pacman)
 					_ghosts.append(ghost)
 				self.ghosts = _ghosts
-			t1 = pygame.time.get_ticks()
-			print 'evolve(): %s' % (t1-t0)
 			# Show the maze, followed by the ghosts, followed by pacman. Pacman
 			# also draws the scoreboard.
 			self.maze.show(center=self.center)
 			for ghost in self.ghosts:
 				ghost.show(center=self.center)
 			self.pacman.show(center=self.center)
-			t2 = pygame.time.get_ticks()
-			print 'show(): %s' % (t2-t1)
 			# Check if we're game over
 			for ghost in self.ghosts:
 				if ghost.getPos() == self.pacman.getPos():
@@ -123,6 +132,7 @@ class Game(object):
 					return True
 			# Process keypress events
 			for e in pygame.event.get():
+				# For the PC
 				if e.type == pygame.KEYDOWN:
 					if e.key == pygame.K_ESCAPE:
 						if self.music:
@@ -136,11 +146,26 @@ class Game(object):
 						self.pacman.setNextDir(u'left')
 					elif e.key == pygame.K_RIGHT:
 						self.pacman.setNextDir(u'right')
-			t3 = pygame.time.get_ticks()
-			print 'full loop: %s' % (t3-t0)
-			if (t3-t0) < self.frameDur:
-				dur = self.frameDur-(t3-t0)
+				# Tapping on the screen also steers the Pacman (for Android)
+				elif e.type == pygame.MOUSEBUTTONDOWN:
+					x, y = e.pos
+					dx = x-xc
+					dy = y-yc
+					print x, y, dx, dy
+					if abs(dx) > abs(dy):
+						if dx > 0:
+							self.pacman.setNextDir(u'right')
+						else:
+							self.pacman.setNextDir(u'left')
+					elif dy > 0:
+						self.pacman.setNextDir(u'down')
+					else:
+						self.pacman.setNextDir(u'up')
+			t1 = pygame.time.get_ticks()
+			if (t1-t0) < self.frameDur:
+				dur = self.frameDur-(t1-t0)
 				print 'Sleep %d' % dur
 				pygame.time.wait(dur)
 			pygame.display.flip()
-			print
+			if android != None and android.check_pause():
+				android.wait_for_resume()
