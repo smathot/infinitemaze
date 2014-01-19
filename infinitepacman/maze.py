@@ -33,7 +33,7 @@ class Maze(object):
 
 	"""The maze-controller class."""
 
-	def __init__(self, s=20, w=32, lw=3, r=5, lineCol1='#729fcf', lineCol2= \
+	def __init__(self, s=24, w=32, lw=4, r=6, lineCol1='#729fcf', lineCol2= \
 		'#204a87', wallCol='#3465a4', bgCol='#d3d7cf', fntCol='#8ae234', \
 		fntBgCol='#4e9a06', nGhosts=5, graphics=True, blink=False):
 
@@ -53,6 +53,7 @@ class Maze(object):
 		self.r = r
 		self.frameNr = 0
 		self.blink = blink
+		self.pearlTypes = [1,2,3,4]
 		if graphics:
 			self.lineCol1 = pygame.Color(lineCol1)
 			self.lineCol2 = pygame.Color(lineCol2)
@@ -77,35 +78,15 @@ class Maze(object):
 		t1 = pygame.time.get_ticks()
 		print '\t%d build time' % (t1-t0)
 
-	def build(self, exit=None):
+	def build(self):
 
-		"""
-		Builds a random maze using depth-first search.
+		"""Builds a random maze using Eller's algorithm."""
 
-		Keyword arguments:
-		reset		--	Indicates whether the array should
-		exit		--	The exit position. (default=(1,1))
-		"""
-
-		if exit == None:
-			exit = self.s/2, self.s/2
-		# Randomly build walls
-		nPos = [ (-2, 0), (2, 0), (0, -2), (0, 2) ]
-		self.vis[exit] = 1
-		shuffle(nPos)
-		for dx, dy in nPos:
-			_dx = (exit[0]+dx) % self.s
-			_dy = (exit[1]+dy) % self.s
-			wx = (exit[0]+dx/2) % self.s
-			wy = (exit[1]+dy/2) % self.s
-			if self.vis[_dx, _dy] == 0:
-				self.walls[wx, wy] = 0
-				exit = _dx, _dy
-				self.build(exit=exit)
+		self.walls.ellers()
 		# Add pearls wherever there are no walls
 		for x, y in self.allPos:
 			if self.walls[x,y] == 0:
-				self.pearls[x,y] = randint(1,4)
+				self.pearls[x,y] = choice(self.pearlTypes)
 
 	def centerView(self, a, pos=None):
 
@@ -118,7 +99,8 @@ class Maze(object):
 		Keyword arguments:
 		pos		--	The position to center on, or None to use Pacman's position.
 					(default=None)
-Returns:
+
+		Returns:
 		A centered array.
 		"""
 
@@ -233,12 +215,31 @@ Returns:
 		# Create a new entirely random maze and fill the region around the
 		# PacMan with the current maze.
 		eMaze = Maze(graphics=False)
-		for _x in range(s/2-r, s/2+r+1):
-			eMaze.walls[_x, s/2-r:s/2+r+1] = cWalls[_x, s/2-r:s/2+r+1]
-			eMaze.vis[_x, s/2-r:s/2+r+1] = cVis[_x, s/2-r:s/2+r+1]
-		eMaze.build()
-		for _x in range(s/2-r, s/2+r+1):
-			eMaze.pearls[_x, s/2-r:s/2+r+1] = cPearls[_x, s/2-r:s/2+r+1]
+		minX = s/2-r
+		maxX = s/2+r+1
+		minY = s/2-r
+		maxY = s/2+r+1
+		for _x in range(minX, maxX):
+			eMaze.walls[_x, minY:maxY] = cWalls[_x, minY:maxY]
+			eMaze.vis[_x, minY:maxY] = cVis[_x, minY:maxY]
+			eMaze.pearls[_x, minY:maxY] = cPearls[_x, minY:maxY]
+		# Now deisolate cells that may have become isolated by combining two
+		# random mazes.
+		for ix in range(0, s, 2):
+			for iy in range(0, s, 2):
+				isolated = True
+				ld = [(0,-1), (0,1), (-1,0), (1,0)]
+				shuffle(ld)
+				for dx, dy in ld:
+					_x = (ix+dx)%s
+					_y = (iy+dy)%s
+					if eMaze.walls[_x,_y] == 0:
+						isolated = False
+						break
+				if isolated:
+					print 'Deisolate!'
+					eMaze.walls[_x, _y] = 0
+					eMaze.pearls[_x, _y] = choice(self.pearlTypes)
 		# Uncenter the maze
 		x = s - x
 		y = s - y

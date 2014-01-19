@@ -35,7 +35,7 @@ class Game(object):
 	"""The game-controller class."""
 
 	def __init__(self, fps=6, evolve=False, center=False, blink=False, sound= \
-		True, music=False):
+		True, music=False, intro=False):
 
 		"""
 		Constructor.
@@ -59,6 +59,7 @@ class Game(object):
 		self.blink = blink
 		self.sound = sound
 		self.music = music
+		self.intro = intro
 
 	def launch(self):
 
@@ -78,18 +79,19 @@ class Game(object):
 				__file__), u'sounds', u'hit1.ogg'))
 		# Intro animation!
 		print 'Intro animation ...'
-		for dir in [u'up', u'right', u'down', u'left'] * 2:
-			self.maze.showClear()
-			for ghost in self.ghosts:
-				ghost.show(center=self.center)
-			self.pacman.setDir(dir)
-			self.pacman.show(center=self.center)
-			if self.sound:
-				startSound.play()
-			pygame.display.flip()
-			if android != None and android.check_pause():
-				android.wait_for_resume()
-			pygame.time.wait(self.frameDur)
+		if self.intro:
+			for dir in [u'up', u'right', u'down', u'left'] * 2:
+				self.maze.showClear()
+				for ghost in self.ghosts:
+					ghost.show(center=self.center)
+				self.pacman.setDir(dir)
+				self.pacman.show(center=self.center)
+				if self.sound:
+					startSound.play()
+				pygame.display.flip()
+				if android != None and android.check_pause():
+					android.wait_for_resume()
+				pygame.time.wait(self.frameDur)
 
 		if self.music:
 			music.play()

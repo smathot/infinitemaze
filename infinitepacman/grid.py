@@ -18,6 +18,8 @@ along with infinite-maze-of-pacman.  If not, see
 <http://www.gnu.org/licenses/>.
 """
 
+from random import randint, choice
+
 class Grid(object):
 
 	"""
@@ -76,6 +78,35 @@ class Grid(object):
 				else:
 					self.l[x][y] = 1
 
+	def ellers(self):
+
+		"""
+		Fills the grid with a maze, using Eller's algorithm.
+
+		See also:
+		- <http://weblog.jamisbuck.org/2010/12/29/maze-generation-eller-s-\
+		  algorithm>
+		"""
+
+		self.addStripes()
+		for x in range(0, self.shape[0], 2):
+			# For each row, randomly connect adjacent cells
+			sets = []
+			set = []
+			for y in range(0, self.shape[1], 2):
+				set.append(y)
+				if randint(0,1) == 0:
+					self.l[x][y+1] = 0
+				else:
+					sets.append(set)
+					set = []
+			if len(set) != 0:
+				sets.append(set)
+			# Now, for each layer of connected cells, choose one bridge down.
+			for set in sets:
+				y = choice(set)
+				self.l[x+1][y] = 0
+
 	def __str__(self):
 
 		"""Prints a representation of the grid."""
@@ -83,7 +114,10 @@ class Grid(object):
 		s = ''
 		for x in range(self.shape[0]):
 			for y in range(self.shape[1]):
-				s += str(self.l[x][y])
+				if self.l[x][y] == 0:
+					s += ' '
+				else:
+					s += 'X'
 			s += '\n'
 		return s
 
