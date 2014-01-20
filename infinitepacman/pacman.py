@@ -32,16 +32,16 @@ class Pacman(Creature):
 
 	"""The Pacman creature."""
 
-	def __init__(self, maze):
+	def __init__(self, game):
 
 		"""
 		Constructor.
 
-		maze	--	The Maze object.
+		game	--	The Game object.
 		"""
 
-		super(Pacman, self).__init__(maze, pos=(maze.width()/2, \
-			maze.height()/2))
+		super(Pacman, self).__init__(game, pos=(game.maze.width()/2, \
+			game.maze.height()/2))
 		self.maze.setPacman(self)
 		self.score = 0
 		self.goalDir = u'stop'
@@ -49,8 +49,10 @@ class Pacman(Creature):
 			u'sounds', u'hit1.ogg'))
 		self.hit10 = mixer.Sound(os.path.join(os.path.dirname(__file__),
 			u'sounds', u'hit10.ogg'))
+		self.hit10.set_volume(.15)
 		self.hit50 = mixer.Sound(os.path.join(os.path.dirname(__file__),
 			u'sounds', u'hit50.ogg'))
+		self.hit50.set_volume(.25)
 
 	def getScore(self):
 
@@ -78,7 +80,9 @@ class Pacman(Creature):
 						Pacman. (default=True)
 		"""
 
-		# First, show the Pacman
+		if self.isMoving():
+			self.prevShowDir = self.dir
+		dx, dy = self.prevShowDir
 		self.currentSprite = 1 - self.currentSprite
 		img = self.sprites[self.currentSprite]
 		if center:
@@ -86,7 +90,6 @@ class Pacman(Creature):
 			y = self.maze.height()/2
 		else:
 			x, y = self.pos
-		dx, dy = self.dir
 		w, h = self.size()
 		if dx == -1:
 			img = pygame.transform.flip(img, True, False)
@@ -108,6 +111,7 @@ class Pacman(Creature):
 			self.score += 1
 			if self.score % 50 == 0:
 				self.hit50.play()
+				self.game.addGhost()
 			elif self.score % 10 == 0:
 				self.hit10.play()
 			else:

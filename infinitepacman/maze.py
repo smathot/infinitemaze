@@ -33,9 +33,9 @@ class Maze(object):
 
 	"""The maze-controller class."""
 
-	def __init__(self, s=24, w=32, lw=4, r=6, lineCol1='#729fcf', lineCol2= \
-		'#204a87', wallCol='#3465a4', bgCol='#d3d7cf', fntCol='#8ae234', \
-		fntBgCol='#4e9a06', nGhosts=5, graphics=True, blink=False):
+	def __init__(self, game, s=24, w=32, lw=4, r=6, lineCol1='#729fcf', \
+		lineCol2='#204a87', wallCol='#3465a4', bgCol='#d3d7cf', fntCol= \
+		'#8ae234', fntBgCol='#4e9a06', nGhosts=5, graphics=True, blink=False):
 
 		"""
 		Constructor.
@@ -47,6 +47,7 @@ class Maze(object):
 
 		assert(s % 4 == 0)
 
+		self.game = game
 		self.s = s
 		self.w = w
 		self.lw = lw
@@ -63,7 +64,8 @@ class Maze(object):
 			self.fntBgCol = pygame.Color(fntBgCol)
 			# Load sprites and resize them to the proper size
 			self.pList = [pygame.transform.smoothscale(pygame.image.load( \
-				u'infinitepacman/sprites/pearl%d.png' % i), (self.w/3, self.w/3) ) \
+				os.path.join(os.path.dirname(__file__), u'sprites', \
+				u'pearl%d.png' % i)), (self.w/3, self.w/3) ) \
 				for i in range(1,5)]
 			self.soundGameOver = mixer.Sound(os.path.join( \
 				os.path.dirname(__file__), u'sounds', u'gameOver.ogg'))
@@ -122,6 +124,18 @@ class Maze(object):
 		"""
 
 		return self.w, self.w
+
+	def clearAt(self, pos):
+
+		"""
+		Removes the wall at a certain position.
+
+		Arguments:
+		pos		--	An (x,y) tuple with the position.
+		"""
+
+		self.walls[pos] = 0
+		self.pearls[pos] = choice(self.pearlTypes)
 
 	def eatPearl(self, pos):
 
@@ -214,7 +228,7 @@ class Maze(object):
 		cPearls = self.centerView(self.pearls, (x,y))
 		# Create a new entirely random maze and fill the region around the
 		# PacMan with the current maze.
-		eMaze = Maze(graphics=False)
+		eMaze = Maze(self.game, graphics=False)
 		minX = s/2-r
 		maxX = s/2+r+1
 		minY = s/2-r
@@ -238,8 +252,7 @@ class Maze(object):
 						break
 				if isolated:
 					print 'Deisolate!'
-					eMaze.walls[_x, _y] = 0
-					eMaze.pearls[_x, _y] = choice(self.pearlTypes)
+					eMaze.clearAt((_x,_y))
 		# Uncenter the maze
 		x = s - x
 		y = s - y
@@ -252,11 +265,22 @@ class Maze(object):
 		"""Initialize the PyGame window."""
 
 		print 'Initializing window'
-		self.win = pygame.display.set_mode((self.s*self.w, self.s*self.w))
+		self.win = pygame.display.set_mode(self.resolution())
 		print 'Loading font'
 		self.fnt = pygame.font.Font(os.path.join(os.path.dirname(__file__), \
 			u'fonts', 'FreeMono.ttf'), 64)
 		print 'Done'
+
+	def resolution(self):
+
+		"""
+		Gets the window resolution.
+
+		Returns:
+		An (w, h) tuple.
+		"""
+
+		return self.s*self.w, self.s*self.w
 
 	def setPacman(self, pacman):
 

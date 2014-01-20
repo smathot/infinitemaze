@@ -25,24 +25,24 @@ class Ghost(Creature):
 
 	"""A ghost creature."""
 
-	def __init__(self, maze, pacman):
+	def __init__(self, game):
 
 		"""
-		Construtore.
+		Constructor.
 
 		Arguments:
-		maze	--	The Maze object.
-		pacman	--	The Pacman object.
+		game	--	The game object.
 		"""
 
-		self.pacman = pacman
+		self.game = game
+		self.pacman = game.pacman
 		# Select an empty position that is not too close to Pacman.
 		px, py = self.pacman.getPos()
 		while True:
-			x, y = maze.emptyPos()
+			x, y = game.maze.emptyPos()
 			if abs(x-px) > 2 and abs(y-py) > 2:
 				break
-		super(Ghost, self).__init__(maze, pos=(x,y))
+		super(Ghost, self).__init__(game, pos=(x,y))
 
 	def loadSprites(self):
 

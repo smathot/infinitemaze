@@ -21,6 +21,7 @@ along with infinite-maze-of-pacman.  If not, see
 
 import pygame
 import sys
+from random import randint
 from infinitepacman.game import Game
 try:
 	import android
@@ -35,12 +36,12 @@ def main():
 
 	print 'Entering main loop'
 	if android == None:
-		center = '-c' in sys.argv
 		evolve = '-e' in sys.argv
+		center = '-c' in sys.argv
 		blink = '-b' in sys.argv
 	else:
-		center = True
 		evolve = True
+		center = True
 		blink = False
 	if android != None:
 		android.init()

@@ -25,13 +25,13 @@ class Creature(object):
 
 	"""Class description."""
 
-	def __init__(self, maze, pos=None, dir=(0,0)):
+	def __init__(self, game, pos=None, dir=(0,0)):
 
 		"""
 		Constructor.
 
 		Arguments:
-		maze	--	A Maze object.
+		game	--	The Game object.
 
 		Keyword arguments:
 		pos		--	An (x,y) tuple with the initial position, or None to
@@ -39,7 +39,8 @@ class Creature(object):
 		dir		--	A (dx, dy) tuple with the initial direction. (default=(0,0))
 		"""
 
-		self.maze = maze
+		self.game = game
+		self.maze = game.maze
 		if pos == None:
 			pos = self.maze.emptyPos()
 		self.pos = pos
