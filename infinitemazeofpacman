@@ -22,7 +22,7 @@ along with infinite-maze-of-pacman.  If not, see
 import pygame
 import sys
 from random import randint
-from infinitepacman.game import Game
+from infinitemaze.game import Game
 try:
 	import android
 	import android.mixer as mixer

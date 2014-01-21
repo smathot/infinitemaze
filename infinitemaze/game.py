@@ -119,7 +119,7 @@ class Game(object):
 		"""Shows the introduction animation."""
 		
 		imgIns = pygame.image.load(os.path.join( \
-			os.path.dirname(infinitepacman.__file__), u'sprites', \
+			os.path.dirname(infinitemaze.__file__), u'sprites', \
 			u'instructions.png'))
 		for i in range(5):
 			if android != None and android.check_pause():
