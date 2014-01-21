@@ -19,7 +19,7 @@ along with infinite-maze-of-pacman.  If not, see
 """
 
 from random import randint, choice
-from infinitepacman.creature import Creature
+from infinitemaze.creature import Creature
 
 class Ghost(Creature):
 

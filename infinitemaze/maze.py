@@ -19,7 +19,7 @@ along with infinite-maze-of-pacman.  If not, see
 """
 
 import os
-from infinitepacman.grid import Grid
+from infinitemaze.grid import Grid
 from random import shuffle, randint, sample, choice
 import pygame
 try:

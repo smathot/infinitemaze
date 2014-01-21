@@ -20,7 +20,7 @@ along with infinite-maze-of-pacman.  If not, see
 
 import os
 import pygame
-from infinitepacman.creature import Creature
+from infinitemaze.creature import Creature
 try:
 	import android
 	import android.mixer as mixer

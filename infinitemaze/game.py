@@ -18,10 +18,10 @@ along with infinite-maze-of-pacman.  If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-import infinitepacman
-from infinitepacman.maze import Maze
-from infinitepacman.pacman import Pacman
-from infinitepacman.ghost import Ghost
+import infinitemaze
+from infinitemaze.maze import Maze
+from infinitemaze.pacman import Pacman
+from infinitemaze.ghost import Ghost
 import os
 import pygame
 try:
