@@ -33,7 +33,7 @@ class Maze(object):
 
 	"""The maze-controller class."""
 
-	def __init__(self, game, s=24, w=32, lw=4, r=6, lineCol1='#729fcf', \
+	def __init__(self, game, s=24, w=32, lw=4, r=4, lineCol1='#729fcf', \
 		lineCol2='#204a87', wallCol='#3465a4', bgCol='#d3d7cf', fntCol= \
 		'#8ae234', fntBgCol='#4e9a06', nGhosts=5, graphics=True, blink=False):
 
@@ -208,9 +208,15 @@ class Maze(object):
 				l.append((x,y))
 		return choice(l)
 
-	def evolve(self):
+	def evolve(self, style=u'directional'):
 
-		"""Randomly evolve the maze."""
+		"""
+		Randomly evolves the maze.
+		
+		Keyword arguments:
+		style	--	Specifies how the maze should evolve. 'directional',
+					'counterdirectional', or 'central'
+		"""
 
 		t0 = pygame.time.get_ticks()
 		s = self.s
@@ -226,17 +232,56 @@ class Maze(object):
 		cWalls = self.centerView(self.walls, (x,y))
 		cVis = self.centerView(self.vis, (x,y))
 		cPearls = self.centerView(self.pearls, (x,y))
-		# Create a new entirely random maze and fill the region around the
-		# PacMan with the current maze.
+		
+		# The evolution happens by generating a new random maze, and copying
+		# parts of the current maze onto the new maze.
 		eMaze = Maze(self.game, graphics=False)
-		minX = s/2-r
-		maxX = s/2+r+1
-		minY = s/2-r
-		maxY = s/2+r+1
+		if style == u'central':
+			# Copy the region around the pacman
+			minX = s/2-r
+			maxX = s/2+r+1
+			minY = s/2-r
+			maxY = s/2+r+1
+		elif style in (u'directional', u'counterdirectional'):
+			# Copy the region behind the pacman
+			dir = self.pacman.getDir()
+			if style == u'counterdirectional':
+				dir = -1*dir[0], -1*dir[1]
+			if dir == (0, -1): # Up
+				minX = 0
+				maxX = s
+				minY = 0
+				maxY = s/2+r+1
+			elif dir == (0, 1): # Down
+				minX = 0
+				maxX = s
+				minY = s/2-r
+				maxY = s
+			elif dir == (1, 0): # Right
+				minX = s/2-r
+				maxX = s
+				minY = 0
+				maxY = s
+			elif dir == (-1, 0): # Left
+				minX = 0
+				maxX = s/2+r+1
+				minY = 0
+				maxY = s
+			elif dir == (0, 0): # Stop
+				minX = 0
+				maxX = s
+				minY = 0
+				maxY = s
+			else:
+				raise Exception(u'Invalid dir: %s' % dir)
+		else:
+			raise Exception(u'Invalid evolveStyle: %s' % style)
+		# Now copy a chunk of the current maze onto the new maze.
 		for _x in range(minX, maxX):
 			eMaze.walls[_x, minY:maxY] = cWalls[_x, minY:maxY]
 			eMaze.vis[_x, minY:maxY] = cVis[_x, minY:maxY]
 			eMaze.pearls[_x, minY:maxY] = cPearls[_x, minY:maxY]
+
 		# Now deisolate cells that may have become isolated by combining two
 		# random mazes.
 		for ix in range(0, s, 2):

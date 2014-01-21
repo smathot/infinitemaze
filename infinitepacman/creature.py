@@ -54,6 +54,15 @@ class Creature(object):
 		True if the creature is moving, False otherwise.
 		"""
 		return self.dir != (0,0)
+	
+	def getDir(self):
+
+		"""
+		Returns:
+		An (dx,dy) tuple with the creature's direction.
+		"""
+
+		return self.dir
 
 	def getPos(self):
 

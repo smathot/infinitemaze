@@ -123,19 +123,16 @@ class Game(object):
 			u'instructions.png'))
 		for i in range(5):
 			if android != None and android.check_pause():
-				android.wait_for_resume()		
+				android.wait_for_resume()
+			self.maze.show()
 			self.win().blit(imgIns, (0,0))
 			pygame.display.flip()
 		# Process keypress events
 		self.wait()
-		
 		i = 0
 		for dir in [u'up', u'right', u'down', u'left'] * 2:
 			t0 = pygame.time.get_ticks()
-			if i < 8:
-				self.maze.showClear()
-			else:
-				self.maze.show()
+			self.maze.show()
 			for ghost in self.ghosts:
 				ghost.show(center=self.center)
 			self.pacman.setDir(dir)
@@ -175,7 +172,7 @@ class Game(object):
 					ghost.move()
 			# Next evolve the maze.
 			if self.evolve and (self.pacman.isMoving() or self.blink):
-				self.maze.evolve()
+				self.maze.evolve(style=u'directional')
 				if self.persistentGhosts:
 					# Remove walls where there are ghosts
 					for ghost in self.ghosts:
@@ -217,6 +214,10 @@ class Game(object):
 		
 		"""Pauzes until the screen is tapped or a key is pressed."""
 		
+		# First flush
+		for e in pygame.event.get():
+			pass
+		# And then wait
 		while True:
 			for e in pygame.event.get():
 				if e.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN):
