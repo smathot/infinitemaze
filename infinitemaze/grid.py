@@ -114,10 +114,7 @@ class Grid(object):
 		s = ''
 		for x in range(self.shape[0]):
 			for y in range(self.shape[1]):
-				if self.l[x][y] == 0:
-					s += ' '
-				else:
-					s += 'X'
+				s += ' %.3d' % self.l[x][y]
 			s += '\n'
 		return s
 

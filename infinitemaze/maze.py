@@ -33,7 +33,7 @@ class Maze(object):
 
 	"""The maze-controller class."""
 
-	def __init__(self, game, s=24, w=32, lw=4, r=4, lineCol1='#729fcf', \
+	def __init__(self, game, s=24, w=32, lw=2, r=4, lineCol1='#729fcf', \
 		lineCol2='#204a87', wallCol='#3465a4', bgCol='#d3d7cf', fntCol= \
 		'#8ae234', fntBgCol='#4e9a06', nGhosts=5, graphics=True, blink=False):
 
@@ -45,8 +45,9 @@ class Maze(object):
 		w		--	The cell width. (default=24)
 		"""
 
+		# Check that the maze has a valid size
 		assert(s % 4 == 0)
-
+		
 		self.game = game
 		self.s = s
 		self.w = w
@@ -54,7 +55,7 @@ class Maze(object):
 		self.r = r
 		self.frameNr = 0
 		self.blink = blink
-		self.pearlTypes = [1,2,3,4]
+		self.pearlTypes = range(1, 13)
 		if graphics:
 			self.lineCol1 = pygame.Color(lineCol1)
 			self.lineCol2 = pygame.Color(lineCol2)
@@ -62,11 +63,15 @@ class Maze(object):
 			self.bgCol = pygame.Color(bgCol)
 			self.fntCol = pygame.Color(fntCol)
 			self.fntBgCol = pygame.Color(fntBgCol)
-			# Load sprites and resize them to the proper size
-			self.pList = [pygame.transform.smoothscale(pygame.image.load( \
-				os.path.join(os.path.dirname(__file__), u'sprites', \
-				u'pearl%d.png' % i)), (self.w/3, self.w/3) ) \
-				for i in range(1,5)]
+			# Load diamond sprites
+			self.pList = []
+			for path in os.listdir(os.path.join(os.path.dirname(__file__), \
+				u'sprites')):
+				if u'diamond' not in path:
+					continue
+				self.pList.append(pygame.image.load(os.path.join( \
+					os.path.dirname(__file__), u'sprites', path)))
+			assert(len(self.pList) == len(self.pearlTypes))
 			self.soundGameOver = mixer.Sound(os.path.join( \
 				os.path.dirname(__file__), u'sounds', u'gameOver.ogg'))
 		# Build a list of all positions
@@ -78,7 +83,6 @@ class Maze(object):
 		t0 = pygame.time.get_ticks()
 		self.build()
 		t1 = pygame.time.get_ticks()
-		print '\t%d build time' % (t1-t0)
 
 	def build(self):
 
@@ -212,7 +216,7 @@ class Maze(object):
 
 		"""
 		Randomly evolves the maze.
-		
+
 		Keyword arguments:
 		style	--	Specifies how the maze should evolve. 'directional',
 					'counterdirectional', or 'central'
@@ -232,7 +236,7 @@ class Maze(object):
 		cWalls = self.centerView(self.walls, (x,y))
 		cVis = self.centerView(self.vis, (x,y))
 		cPearls = self.centerView(self.pearls, (x,y))
-		
+
 		# The evolution happens by generating a new random maze, and copying
 		# parts of the current maze onto the new maze.
 		eMaze = Maze(self.game, graphics=False)
@@ -315,6 +319,8 @@ class Maze(object):
 		self.fnt = pygame.font.Font(os.path.join(os.path.dirname(__file__), \
 			u'fonts', 'FreeMono.ttf'), 64)
 		print 'Done'
+		#self.rg = self.rg.convert()
+		#self.by = self.by.convert()
 
 	def resolution(self):
 

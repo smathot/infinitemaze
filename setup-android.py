@@ -19,14 +19,16 @@ along with infinite-maze-of-pacman.  If not, see
 <http://www.gnu.org/licenses/>.
 """
 
+import json
+import infinitemaze
 import shutil
 import sys
 import os
 import subprocess
 
-pgs4a_folder = 'pgs4a-0.9.4'
+pgs4a_folder = 'pgs4a-0.9.4' # Must match pgs4a folder
+
 target = os.path.join(pgs4a_folder, 'infinitemaze')
-module_folder = '/usr/lib/python2.7'
 clear_cmd = \
 	'./android-sdk/platform-tools/adb shell pm clear nl.cogsci.infinitemaze'
 build_cmd = './android.py build infinitemaze release'
@@ -40,11 +42,11 @@ os.mkdir(target)
 
 # Copy necessary files
 print 'Copying main.py'
-shutil.copyfile('pacman', os.path.join(target, 'main.py'))
+shutil.copyfile('infinitemazeofpacman', os.path.join(target, 'main.py'))
 print 'Copying module'
-shutil.copytree('infinitepacman', os.path.join(target, 'infinitepacman'))
-print 'Copying .android.json'
-shutil.copyfile('android/android.json', os.path.join(target, '.android.json'))
+shutil.copytree('infinitemaze', os.path.join(target, 'infinitemaze'))
+# Generating .android.json
+json.dump(infinitemaze.info, open(os.path.join(target, '.android.json'), 'w'))
 print 'Copying android-icon.png'
 shutil.copyfile('android/android-icon.png', \
         os.path.join(target, 'android-icon.png'))

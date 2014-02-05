@@ -67,7 +67,11 @@ class Pacman(Creature):
 
 		"""Loads the sprites."""
 
-		self.sprites = [self.sprite(u'pacman%d.png' % i) for i in range(1, 3)]
+		self.sprites = [
+			self.sprite(u'pacman-mouth-open.png'),
+			self.sprite(u'pacman-mouth-closed.png'),
+			self.sprite(u'pacman-frontal.png')
+			]
 		self.currentSprite = 0
 
 	def show(self, center=True):
@@ -82,21 +86,24 @@ class Pacman(Creature):
 
 		if self.isMoving():
 			self.prevShowDir = self.dir
+			self.currentSprite = 1 - self.currentSprite
+			img = self.sprites[self.currentSprite]
+		else:
+			img = self.sprites[-1]
 		dx, dy = self.prevShowDir
-		self.currentSprite = 1 - self.currentSprite
-		img = self.sprites[self.currentSprite]
 		if center:
 			x = self.maze.width()/2
 			y = self.maze.height()/2
 		else:
 			x, y = self.pos
 		w, h = self.size()
-		if dx == -1:
-			img = pygame.transform.flip(img, True, False)
-		elif dy == -1:
-			img = pygame.transform.rotate(img, 90)
-		elif dy == 1:
-			img = pygame.transform.rotate(img, 270)
+		if self.isMoving():
+			if dx == 1:
+				img = pygame.transform.flip(img, True, False)
+			elif dy == 1:
+				img = pygame.transform.rotate(img, 90)
+			elif dy == -1:
+				img = pygame.transform.rotate(img, 270)
 		self.win().blit(img, (x*w, y*h))
 		# Next, show the score
 		self.maze.showText('%d' % self.score, pos=u'top-right')

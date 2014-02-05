@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
 """
@@ -18,18 +19,24 @@ along with infinite-maze-of-pacman.  If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-# This dictionary is used to generate the .android.json file that pgs4a uses
-# to build the package. It also contains some information that is useful for
-# non-Android system, notably the version.
-info = {
-	"version"			: "0.3.0", # Human readable version
-	"numeric_version"	: "5", # Android build number
-	"name"				: "Infinite Maze of Pac-man",
-	"layout"			: "internal",
-	"orientation"		: "portrait",
-	"package"			: "nl.cogsci.infinitemaze",
-	"include_pil"		: True,
-	"icon_name"			: "Infinite Maze of Pac-man",
-	"permissions"		: ["INTERNET", "VIBRATE"],
-	"include_sqlite"	: False,
-	}
+import os
+from subprocess import call
+
+for src in os.listdir('svg'):
+	# Determine DPI
+	if 'diamond' in src or src == 'instructions.svg':
+		dpi = '90'
+	elif src == 'android-icon.svg':
+		dpi = '240'
+	else:
+		dpi = '120'
+	# Determine destination
+	dest = os.path.splitext(src)[0] + '.png'
+	if src == 'android-icon.svg':
+		dest = '../android/' + dest
+	else:
+		dest = '../infinitemaze/sprites/' + dest
+	cmd = ['inkscape', '-f', 'svg/'+src, '-e', dest, '-d', dpi]
+	if call(cmd) != 0:
+		raise Exception('Failed to convert')
+

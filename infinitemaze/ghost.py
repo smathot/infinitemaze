@@ -48,7 +48,9 @@ class Ghost(Creature):
 
 		"""Loads the sprites."""
 
-		self._sprite = self.sprite(u'ghost%d.png' % randint(1, 8))
+		color = choice( [u'green', u'red', u'blue'] )
+		self._sprite = self.sprite(u'ghost-%s-1.png' % color), \
+			self.sprite(u'ghost-%s-2.png' % color)
 
 	def move(self):
 
@@ -77,4 +79,5 @@ class Ghost(Creature):
 			y = ((y-py) + mh/2) % mh
 		dx, dy = self.dir
 		w, h = self.size()
-		self.win().blit(self._sprite, (x*w, y*h))
+		self.win().blit(self._sprite[0], (x*w, y*h))
+		self._sprite = self._sprite[1], self._sprite[0]
