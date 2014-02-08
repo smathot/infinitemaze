@@ -22,8 +22,8 @@ along with infinite-maze-of-pacman.  If not, see
 # to build the package. It also contains some information that is useful for
 # non-Android system, notably the version.
 info = {
-	"version"			: "0.3.0", # Human readable version
-	"numeric_version"	: "5", # Android build number
+	"version"			: "0.4.0", # Human readable version
+	"numeric_version"	: "6", # Android build number
 	"name"				: "Infinite Maze of Pac-man",
 	"layout"			: "internal",
 	"orientation"		: "portrait",

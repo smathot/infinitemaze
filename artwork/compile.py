@@ -24,10 +24,8 @@ from subprocess import call
 
 for src in os.listdir('svg'):
 	# Determine DPI
-	if 'diamond' in src or src == 'instructions.svg':
+	if 'diamond' in src or src in ['instructions.svg', 'android-icon.svg']:
 		dpi = '90'
-	elif src == 'android-icon.svg':
-		dpi = '240'
 	else:
 		dpi = '120'
 	# Determine destination
