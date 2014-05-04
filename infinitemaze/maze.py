@@ -33,9 +33,10 @@ class Maze(object):
 
 	"""The maze-controller class."""
 
-	def __init__(self, game, s=24, w=32, lw=2, r=4, lineCol1='#729fcf', \
-		lineCol2='#204a87', wallCol='#3465a4', bgCol='#d3d7cf', fntCol= \
-		'#8ae234', fntBgCol='#4e9a06', nGhosts=5, graphics=True, blink=False):
+	def __init__(self, game, s=24, w=32, lw=2, r=4, lineCol1='#729fcf',
+		lineCol2='#204a87', wallCol='#3465a4', bgCol='#d3d7cf',
+		fntCol='#8ae234', fntBgCol='#4e9a06', nGhosts=5, graphics=True,
+		blink=False, banner=None):
 
 		"""
 		Constructor.
@@ -47,7 +48,7 @@ class Maze(object):
 
 		# Check that the maze has a valid size
 		assert(s % 4 == 0)
-		
+
 		self.game = game
 		self.s = s
 		self.w = w
@@ -72,8 +73,14 @@ class Maze(object):
 				self.pList.append(pygame.image.load(os.path.join( \
 					os.path.dirname(__file__), u'sprites', path)))
 			assert(len(self.pList) == len(self.pearlTypes))
+			if banner != None:
+				self.banner = pygame.image.load(banner)
+			else:
+				self.banner = None
 			self.soundGameOver = mixer.Sound(os.path.join( \
 				os.path.dirname(__file__), u'sounds', u'gameOver.ogg'))
+			self.soundGameWon = mixer.Sound(os.path.join( \
+				os.path.dirname(__file__), u'sounds', u'gameWon.ogg'))
 		# Build a list of all positions
 		self.allPos = []
 		for x in range(self.s):
@@ -162,7 +169,23 @@ class Maze(object):
 		"""Shows the game-over message."""
 
 		self.soundGameOver.play()
-		self.showText(u'Game over!', pos=u'center')
+		self.showText(u'You lost!', pos=u'center')
+		pygame.display.flip()
+		pygame.time.wait(1000)
+		self.show()
+		s = u'Score: %d!' % self.pacman.getScore()
+		for i in range(len(s)+1):
+			self.showText(s[:i], pos=u'center')
+			pygame.display.flip()
+			pygame.time.wait(50)
+		pygame.time.wait(1000)
+
+	def gameWon(self):
+
+		"""Shows the game-over message."""
+
+		self.soundGameWon.play()
+		self.showText(u'You won!', pos=u'center')
 		pygame.display.flip()
 		pygame.time.wait(1000)
 		self.show()
@@ -309,18 +332,24 @@ class Maze(object):
 		self.vis = self.centerView(eMaze.vis, (x,y))
 		self.pearls = self.centerView(eMaze.pearls, (x,y))
 
-	def initWin(self):
+	def initWin(self, win=None):
 
-		"""Initialize the PyGame window."""
+		"""
+		Initialize the PyGame window.
+
+		Keyword arguments:
+		win		--	An existing PyGame window to use. (default=None)
+		"""
 
 		print 'Initializing window'
-		self.win = pygame.display.set_mode(self.resolution())
+		if win == None:
+			self.win = pygame.display.set_mode(self.resolution())
+		else:
+			self.win = win
 		print 'Loading font'
 		self.fnt = pygame.font.Font(os.path.join(os.path.dirname(__file__), \
 			u'fonts', 'FreeMono.ttf'), 64)
 		print 'Done'
-		#self.rg = self.rg.convert()
-		#self.by = self.by.convert()
 
 	def resolution(self):
 
@@ -367,6 +396,8 @@ class Maze(object):
 			self.walls = _walls
 			self.pearls = _pearls
 		self.frameNr += 1
+		if self.banner != None:
+			self.win.blit(self.banner, (768,0))
 
 	def showClear(self):
 
@@ -392,7 +423,7 @@ class Maze(object):
 		for x, y in self.allPos:
 			if self.walls[x,y] > 0:
 				pygame.draw.rect(self.win, self.wallCol, (x*self.w, \
-					y*self.w, self.w, self.w))
+					y*self.w, self.w+1, self.w))
 				nPos = [ (-1, 0), (1, 0), (0, -1), (0, 1) ]
 				for dx, dy in nPos:
 					_x = (x+dx) % self.s
