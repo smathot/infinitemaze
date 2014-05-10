@@ -41,23 +41,23 @@ if os.path.exists(target):
 os.mkdir(target)
 
 # Copy necessary files
-print 'Copying main.py'
+print(u'Copying main.py')
 shutil.copyfile('infinitemazeofpacman', os.path.join(target, 'main.py'))
-print 'Copying module'
+print(u'Copying module')
 shutil.copytree('infinitemaze', os.path.join(target, 'infinitemaze'))
 # Generating .android.json
 json.dump(infinitemaze.info, open(os.path.join(target, '.android.json'), 'w'))
-print 'Copying android-icon.png'
+print(u'Copying android-icon.png')
 shutil.copyfile('android/android-icon.png', \
         os.path.join(target, 'android-icon.png'))
-print 'Copying android-presplash.png'
+print(u'Copying android-presplash.png')
 shutil.copyfile('android/android-presplash.jpg', \
         os.path.join(target, 'android-presplash.jpg'))
 
 # And build!
-print 'Building'
+print(u'Building')
 os.chdir(pgs4a_folder)
-print 'Clearing application data'
+print(u'Clearing application data')
 subprocess.call(clear_cmd.split())
-print 'Building'
+print(u'Building')
 subprocess.call(build_cmd.split())

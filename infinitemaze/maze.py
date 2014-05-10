@@ -323,7 +323,7 @@ class Maze(object):
 						isolated = False
 						break
 				if isolated:
-					print 'Deisolate!'
+					print(u'Deisolate!')
 					eMaze.clearAt((_x,_y))
 		# Uncenter the maze
 		x = s - x
@@ -341,15 +341,15 @@ class Maze(object):
 		win		--	An existing PyGame window to use. (default=None)
 		"""
 
-		print 'Initializing window'
+		print(u'Initializing window')
 		if win == None:
 			self.win = pygame.display.set_mode(self.resolution())
 		else:
 			self.win = win
-		print 'Loading font'
+		print(u'Loading font')
 		self.fnt = pygame.font.Font(os.path.join(os.path.dirname(__file__), \
 			u'fonts', 'FreeMono.ttf'), 64)
-		print 'Done'
+		print(u'Done')
 
 	def resolution(self):
 

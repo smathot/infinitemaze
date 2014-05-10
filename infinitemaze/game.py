@@ -38,7 +38,8 @@ class Game(object):
 
 	def __init__(self, fps=6, evolve=0, center=False, blink=False,
 		intro=True, evolveIncrease=0, goalScore=None, musicFile=None, win=None,
-		banner=None, js=None, showInstructions=True, rotDur=4):
+		banner=None, js=None, showInstructions=True, rotDur=4,
+		instructionScreen=None):
 
 		"""
 		Constructor.
@@ -63,6 +64,8 @@ class Game(object):
 								should be shown. (default=True)
 		rotDur		--	The number of rotations that pac-man makes prior to the
 						game. (default=4)
+		instructionScreen	--	The path to the instruction screen or None to
+								use the default. (default=None)
 		"""
 
 		self.maze = Maze(self, blink=blink, banner=banner)
@@ -84,6 +87,11 @@ class Game(object):
 		self.js = js
 		self.showInstructions = showInstructions
 		self.rotDur = rotDur
+		if instructionScreen == None:
+			self.instructionScreen = os.path.join(os.path.dirname(
+				infinitemaze.__file__), u'sprites', 'instructions.png')
+		else:
+			self.instructionScreen = instructionScreen
 
 	def addGhost(self, n=1):
 
@@ -122,6 +130,8 @@ class Game(object):
 					self.pacman.setNextDir(u'left')
 				elif e.key == pygame.K_RIGHT:
 					self.pacman.setNextDir(u'right')
+				elif e.key == pygame.K_p:
+					self.wait()
 			# Optionally use the joystick
 			elif self.js != None and e.type == pygame.JOYBUTTONDOWN:
 				if e.button == 8: # start button
@@ -151,7 +161,6 @@ class Game(object):
 				x, y = e.pos
 				dx = x-xc
 				dy = y-yc
-				print x, y, dx, dy
 				if abs(dx) > abs(dy):
 					if dx > 0:
 						self.pacman.setNextDir(u'right')
@@ -168,18 +177,16 @@ class Game(object):
 		"""Shows the introduction animation."""
 
 		if self.showInstructions:
-			imgIns = pygame.image.load(os.path.join( \
-				os.path.dirname(infinitemaze.__file__), u'sprites', \
-				u'instructions.png'))
+			imgIns = pygame.image.load(self.instructionScreen)
 			for i in range(5):
 				if android != None and android.check_pause():
 					android.wait_for_resume()
 				self.maze.show()
 				self.win().blit(imgIns, (0,0))
 				pygame.display.flip()
-		# Process keypress events
-		if not self.wait():
-			return False
+			# Process keypress events
+			if not self.wait(roi=True):
+				return False
 		if self.musicFile != None:
 			mixer.music.play()
 			pygame.time.wait(200)
@@ -192,7 +199,7 @@ class Game(object):
 			self.pacman.setDir(dir)
 			self.pacman.show(center=self.center)
 			if self.goalScore != None:
-				self.maze.showText('Reach %d points!' % self.goalScore)
+				self.maze.showText(u'Reach %d points!' % self.goalScore)
 			pygame.display.flip()
 			if android != None and android.check_pause():
 				android.wait_for_resume()
@@ -200,7 +207,7 @@ class Game(object):
 			t1 = pygame.time.get_ticks()
 			if (t1-t0) < self.frameDur:
 				dur = self.frameDur-(t1-t0)
-				print 'Sleep %d' % dur
+				print(u'Sleep %d' % dur)
 				pygame.time.wait(dur)
 		return True
 
@@ -220,7 +227,7 @@ class Game(object):
 			mixer.music.set_volume(self.musicVolume)
 		if self.intro:
 			if not self.introduction():
-				return True
+				return False
 		# And start the main game loop!
 		self.pacman.setDir(u'stop')
 		while True:
@@ -251,7 +258,7 @@ class Game(object):
 					self.ghosts = _ghosts
 			# Evolve the evolution!
 			self.evolve += self.evolveIncrease
-			print 'Evolve %.2f' % self.evolve
+			print(u'Evolve %.2f' % self.evolve)
 			# Show the maze, followed by the ghosts, followed by pacman. Pacman
 			# also draws the scoreboard.
 			self.maze.show(center=self.center)
@@ -269,7 +276,7 @@ class Game(object):
 			t1 = pygame.time.get_ticks()
 			if (t1-t0) < self.frameDur:
 				dur = self.frameDur-(t1-t0)
-				print 'Sleep %d' % dur
+				print(u'Sleep %d' % dur)
 				pygame.time.wait(dur)
 			pygame.display.flip()
 			if android != None and android.check_pause():
@@ -295,9 +302,16 @@ class Game(object):
 
 		return self.pacman.getScore()
 
-	def wait(self):
+	def wait(self, roi=False):
 
-		"""Pauzes until the screen is tapped or a key is pressed."""
+		"""
+		Pauzes until the screen is tapped or a key is pressed.
+		
+		Keyword arguments:
+		roi		--	Indicates whether the screen has regions of interest, i.e.
+					buttons that are hardcoded in the image. This is used for
+					the instruction screen. (default=False)
+		"""
 
 		# First flush
 		for e in pygame.event.get():
@@ -309,9 +323,16 @@ class Game(object):
 					if e.key == pygame.K_ESCAPE:
 						return False
 					return True
-				if e.type == pygame.MOUSEBUTTONDOWN:
+				elif e.type == pygame.MOUSEBUTTONDOWN:
+					if roi:
+						x, y = e.pos
+						if x >= 656 and y >= 28 and x <= 720 and y <= 92:
+							print(u'Turning off music')
+							self.musicFile = None
+						elif x >= 656 and y >= 128 and x <= 720 and y <= 192:
+							return False
 					return True
-				if self.js != None and e.type == pygame.JOYBUTTONDOWN:
+				elif self.js != None and e.type == pygame.JOYBUTTONDOWN:
 					if e.button == 8: # start button
 						return False
 					return True

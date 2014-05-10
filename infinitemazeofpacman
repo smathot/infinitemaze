@@ -21,7 +21,8 @@ along with infinite-maze-of-pacman.  If not, see
 
 import pygame
 import sys
-from random import randint
+import os
+from random import randint, shuffle
 from infinitemaze.game import Game
 try:
 	import android
@@ -34,29 +35,52 @@ def main():
 
 	"""The main routine that is automatically called by pgs4a."""
 
-	print 'Entering main loop'
+	print(u'Entering main loop')
 	if android == None:
-		evolve = '-e' in sys.argv
+		if '-e' in sys.argv:
+			evolve = 1
+		else:
+			evolve = 0
 		center = '-c' in sys.argv
 		blink = '-b' in sys.argv
 	else:
-		evolve = True
+		evolve = 0
 		center = True
 		blink = False
 	if android != None:
 		android.init()
 		android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
-	print 'Initializing'
+	print(u'Initializing')
 	pygame.init()
 	pygame.font.init()
 	mixer.init()
-	print 'Entering game loop'
+	print(u'Making music list')
+	musicDir = os.path.join(os.path.dirname(__file__), u'infinitemaze',
+		u'music')
+	musicFiles = os.listdir(musicDir)
+	shuffle(musicFiles)
+	if pygame.joystick.get_count() > 0:
+		js = pygame.joystick.Joystick(0)
+		js.init()
+		print(u'Using joystick')
+	else:
+		js = None
+		print(u'No joystick detected')
+	print(u'Entering game loop')
 	while True:
-		print 'Building game object'
-		g = Game(center=center, evolve=evolve, blink=blink)
-		print 'Launching game'
+		print(u'Selecting music!')
+		if len(musicFiles) == 0:
+			musicFile = None
+		else:
+			musicFile = musicFiles.pop()
+			musicFiles.insert(0, musicFile)
+			musicFile = os.path.join(musicDir, musicFile)
+		print(u'Building game object')
+		g = Game(center=center, evolve=evolve, blink=blink, musicFile=musicFile,
+		   js=js)
+		print(u'Launching game')
 		if not g.launch():
-			print 'Quitting'
+			print(u'Quitting')
 			break
 	pygame.quit()
 
