@@ -171,14 +171,20 @@ class Maze(object):
 		self.soundGameOver.play()
 		self.showText(u'You lost!', pos=u'center')
 		pygame.display.flip()
-		pygame.time.wait(1000)
+		if self.game.logScore:
+			s = self.getPercentile()
+		else:
+			pygame.time.wait(1000)
+			s = u'Score: %d!' % self.pacman.getScore()
 		self.show()
-		s = u'Score: %d!' % self.pacman.getScore()
 		for i in range(len(s)+1):
 			self.showText(s[:i], pos=u'center')
 			pygame.display.flip()
 			pygame.time.wait(50)
-		pygame.time.wait(1000)
+		if self.game.logScore:
+			pygame.time.wait(2000)
+		else:
+			pygame.time.wait(1000)
 
 	def gameWon(self):
 
@@ -195,6 +201,36 @@ class Maze(object):
 			pygame.display.flip()
 			pygame.time.wait(50)
 		pygame.time.wait(1000)
+		
+	def getPercentile(self):
+		
+		"""
+		Connects to a server to log the current score and get a percentile
+		score. A fallback message is used when the server cannot be reached.
+		
+		Returns:
+		A string with a score message.
+		"""
+		
+		import urllib2
+		url = 'http://www.cogsci.nl/infinitemaze.php?score=%d' % \
+			self.pacman.getScore()
+		try:
+			fd = urllib2.urlopen(url, timeout=3)
+		except Exception as e:
+			print(str(e))
+			return u'Score: %d!' % self.pacman.getScore()
+		try:
+			perc = fd.read()
+		except Exception as e:
+			print(str(e))
+			return u'Score: %d!' % self.pacman.getScore()
+		try:
+			perc = float(perc)
+		except Exception as e:
+			print(str(e))
+			return u'Score: %d!' % self.pacman.getScore()
+		return u'Top %.0f%%!' % perc
 
 	def grid(self):
 

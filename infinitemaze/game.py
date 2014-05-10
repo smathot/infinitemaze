@@ -39,7 +39,7 @@ class Game(object):
 	def __init__(self, fps=6, evolve=0, center=False, blink=False,
 		intro=True, evolveIncrease=0, goalScore=None, musicFile=None, win=None,
 		banner=None, js=None, showInstructions=True, rotDur=4,
-		instructionScreen=None):
+		instructionScreen=None, logScore=True):
 
 		"""
 		Constructor.
@@ -66,6 +66,8 @@ class Game(object):
 						game. (default=4)
 		instructionScreen	--	The path to the instruction screen or None to
 								use the default. (default=None)
+		logScore	--	Indicates whether the score should be logged and the
+						percentile score should be calculated. (default=True)
 		"""
 
 		self.maze = Maze(self, blink=blink, banner=banner)
@@ -87,6 +89,7 @@ class Game(object):
 		self.js = js
 		self.showInstructions = showInstructions
 		self.rotDur = rotDur
+		self.logScore = logScore
 		if instructionScreen == None:
 			self.instructionScreen = os.path.join(os.path.dirname(
 				infinitemaze.__file__), u'sprites', 'instructions.png')
