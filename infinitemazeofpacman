@@ -44,7 +44,7 @@ def main():
 		center = '-c' in sys.argv
 		blink = '-b' in sys.argv
 	else:
-		evolve = 0
+		evolve = 1
 		center = True
 		blink = False
 	if android != None:
