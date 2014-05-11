@@ -687,15 +687,15 @@
      inkscape:window-width="1920"
      inkscape:window-height="1016"
      id="namedview213"
-     showgrid="true"
+     showgrid="false"
      inkscape:snap-bbox="true"
-     inkscape:zoom="5.6568542"
-     inkscape:cx="25.221279"
-     inkscape:cy="27.224754"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="215.59545"
+     inkscape:cy="463.69158"
      inkscape:window-x="1364"
      inkscape:window-y="-3"
      inkscape:window-maximized="1"
-     inkscape:current-layer="Layer_1"><inkscape:grid
+     inkscape:current-layer="g5611"><inkscape:grid
        type="xygrid"
        id="grid3975"
        empspacing="5"
@@ -1214,7 +1214,7 @@
        cy="385"
        cx="384.26901"
        d="m 456.26901,385 c 0,39.7645 -32.2355,72 -72,72 -39.7645,0 -72,-32.2355 -72,-72 0,-39.7645 32.2355,-72 72,-72 39.7645,0 72,32.2355 72,72 z" /><g
-       transform="matrix(3.375,0,0,3.375,667.25003,139.5625)"
+       transform="matrix(3.375,0,0,3.375,667.25003,137.5625)"
        id="g5580"
        style="fill:#fdf6cb;fill-opacity:1;enable-background:new"><g
          id="layer9-7"
@@ -1271,5 +1271,5 @@
      id="text4122"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
-       id="tspan4124"></tspan></text>
+       id="tspan4124" /></text>
 </svg>
