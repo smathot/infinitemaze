@@ -6,26 +6,16 @@ Copyright 2014
 Sebastiaan Mathôt <s.mathot@cogsci.nl> (Concept and development)  
 Theo Danes <theo@theodanes.nl> (Artwork and design)
 
-## Overview
-
-%--
-toc:
- mindepth: 2
---%
-
 ## About
 
 *Infinite Maze of Pac-man* is a simple game for Android in the Pac-man tradition. What makes this game unique is that it exploits the psychological phenomenon of change blindness to make the maze literally ... infinite!
 
 ## Download
 
-### Source code
-
-- <https://github.com/smathot/infinitemaze/releases>
-
-### Android (Google Play Store)
-
-Available soon.
+- Android (Google Play Store):
+	- <https://play.google.com/store/apps/details?id=nl.cogsci.infinitemaze>
+- Source code:
+	- <https://github.com/smathot/infinitemaze/releases>
 
 ## Build instructions
 
@@ -50,7 +40,7 @@ to your device:
 	
 ## License
 
-`artwork/svg/*` and `infinitemaze/sprites/*` are released under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. Credit should be attributed to Theo Danes.
+`artwork/svg/*` and `infinitemaze/sprites/*` are released under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. Credit should be attributed to [Theo Danes].
 
 `infinitemaze/sounds/*` are released under a Creative Commons Attributions 3.0 International license. Credit should be attributed to the original creators of <http://opengameart.org/>.
 
@@ -61,3 +51,4 @@ All other content is released under the GNU general public license v3. For detai
 [pgs4a]: http://pygame.renpy.org/
 [pygame]: http://www.pygame.org/
 [python]: http://www.python.org/
+[theo danes]: http://www.theodanes.nl/
