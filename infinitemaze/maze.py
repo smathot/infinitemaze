@@ -230,7 +230,13 @@ class Maze(object):
 		except Exception as e:
 			print(str(e))
 			return u'Score: %d!' % self.pacman.getScore()
-		return u'Top %.0f%%!' % perc
+		if perc < 25:
+			return u'You beat only %.0f%%' % perc
+		if perc == 100:
+			return u'All-time highscore!'
+		if perc > 75:
+			return u'Wow, you beat %.0f%%!' % perc
+		return u'You beat %.0f%%!' % perc
 
 	def grid(self):
 
@@ -384,7 +390,7 @@ class Maze(object):
 			self.win = win
 		print(u'Loading font')
 		self.fnt = pygame.font.Font(os.path.join(os.path.dirname(__file__), \
-			u'fonts', 'FreeMono.ttf'), 64)
+			u'fonts', 'FreeMono.ttf'), 60)
 		print(u'Done')
 
 	def resolution(self):
